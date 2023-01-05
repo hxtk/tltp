@@ -38,21 +38,32 @@ class StaticAlphabet(object):
         return self.alphabet
 
 
-def nist_alphabet(prior: str) -> str:
-    alpha = 'abcdefghijklmnopqrstuvwxyz'
-    digit = '0123456789'
-    symbol = '~!@#$%^&*()-=[]\\{}|'
-    if len(prior) < 4:
-        return alpha + digit + symbol
+def disa_alphabet(prior: str) -> str:
+    lower = set('abcdefghijklmnopqrstuvwxyz')
+    upper = set(x.upper() for x in lower)
+    digit = set('0123456789')
+    symbol = set('~!@#$%^&*()-=[]\\{}|;:\'",./<>?')
+    if len(prior) < 3:
+        return ''.join(sorted(lower | upper | digit | symbol))
+    if len(prior) < 4 and len(set(prior[-3:])) > 1:
+        return ''.join(sorted(lower | upper | digit | symbol))
 
-    out = ''
-    if not all([x in alpha for x in prior[-4:]]):
-        out += alpha
-    if not all([x in digit for x in prior[-4:]]):
-        out += digit
-    if not all([x in symbol for x in prior[-4:]]):
-        out += symbol
-    return out
+    out = set('')
+    # No more than four consecutive of the same character class.
+    if not lower.issuperset(prior[-4:]):
+        out |= lower
+    if not upper.issuperset(prior[-4:]):
+        out |= upper
+    if not digit.issuperset(prior[-4:]):
+        out |= digit
+    if not symbol.issuperset(prior[-4:]):
+        out |= symbol
+
+    # No more than three consecutive of the same character.
+    if len(set(prior[-3:])) == 1:
+        out.remove(prior[-1])
+
+    return ''.join(sorted(out))
 
 
 def time_password(
@@ -62,7 +73,7 @@ def time_password(
     for_time: Optional[datetime.datetime] = None,
     offset: int = 0,
     length: int = 15,
-    alphabet: Union[str, ValidAlphabet] = nist_alphabet,
+    alphabet: Union[str, ValidAlphabet] = disa_alphabet,
 ) -> str:
     if isinstance(password, str):
         password = password.encode(encoding='utf-8')
@@ -85,7 +96,7 @@ def derive_password(
     password: Union[str, bytes],
     salt: Union[str, bytes],
     length: int = 15,
-    alphabet: Union[str, ValidAlphabet] = nist_alphabet,
+    alphabet: Union[str, ValidAlphabet] = disa_alphabet,
 ) -> str:
     if isinstance(password, str):
         password = password.encode(encoding='utf-8')

@@ -1,8 +1,13 @@
-from absl import logging
+import sys
+
+_MESSAGE = """
+The clipboard feature requires the optional dependency `pyperclip`.
+You may install it by running the following command or your platform's
+equivalent:
+    $ pip install pyperclip
+"""
 
 
 def copy(_: str):
-    logging.fatal("""This feature requires the optional dependency `pyperclip`.
-    You may install it by running the following command:
-        $ pip install pyperclip
-    """)
+    print(_MESSAGE, file=sys.stderr)
+    exit(1)
