@@ -1,3 +1,4 @@
+"""Entrypoint for TLTP Command Line application."""
 import argparse
 import datetime
 import getpass
@@ -100,7 +101,7 @@ def main():
         confirm = getpass.getpass('Confirm Master Password: ')
         if confirm != password:
             print('Master passwords did not match.', file=sys.stderr)
-            exit(1)
+            sys.exit(1)
 
     alphabet = tltp.disa_alphabet
     if args.alphabet is not None:
@@ -111,7 +112,7 @@ def main():
             alphabet = getattr(__import__(module), func)
         except (AttributeError, ModuleNotFoundError) as e:
             print('Error loading alphabet function:', e, file=sys.stderr)
-            exit(1)
+            sys.exit(1)
 
     interval = datetime.timedelta(days=args.interval)
     out = tltp.time_password(

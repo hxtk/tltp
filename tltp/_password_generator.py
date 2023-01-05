@@ -1,3 +1,4 @@
+"""Password generation module."""
 import datetime
 import hashlib
 import random
@@ -8,6 +9,7 @@ from typing import Union
 
 
 class FixedRandom(random.Random):
+    """Output random variables determined by some input random bytes."""
 
     def __init__(self, source: bytes):
         super().__init__()
@@ -15,14 +17,19 @@ class FixedRandom(random.Random):
 
     def seed(self, *args, **kwargs) -> None:
         del args, kwargs
-        return None
 
     def random(self):
+        """Produce the next available [0,1) float from the entropy pool.
+
+        Produces 0 consistently after the entropy pool has been exhausted.
+        Consumes 7 bytes of entropy per call.
+        """
         source, self.source = self.source[:7], self.source[7:]
         return (int.from_bytes(source, 'big') >> 3) * (2**-53)
 
 
 class ValidAlphabet(Protocol):
+    """Function interface for determining valid next characters."""
 
     def __call__(self, prior: str) -> str:
         raise NotImplementedError
@@ -98,6 +105,24 @@ def derive_password(
     length: int = 15,
     alphabet: Union[str, ValidAlphabet] = disa_alphabet,
 ) -> str:
+    """Derive a password from a master password.
+
+    The derived password will be derived using `scrypt` to stretch the salted
+    master password to 7x the length in bytes of the intended derived password.
+    This derived byte sequence is then used as an entropy pool to derive
+    deterministic random choices from among the given alphabet until the desired
+    length is reached.
+
+    Args:
+        password: the master password.
+        salt: the salt applied to the master password.
+        length: the length of the derived password.
+        alphabet: a string of valid password characters or a ValidAlphabet
+            callable.
+
+    Returns:
+        A computationally hard™ password uniquely determined by the inputs.
+    """
     if isinstance(password, str):
         password = password.encode(encoding='utf-8')
     if isinstance(salt, str):

@@ -1,3 +1,4 @@
+"""Replacement module for optional dependency pyperclip."""
 import sys
 
 _MESSAGE = """
@@ -10,4 +11,4 @@ equivalent:
 
 def copy(_: str):
     print(_MESSAGE, file=sys.stderr)
-    exit(1)
+    sys.exit(1)

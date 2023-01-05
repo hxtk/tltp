@@ -17,7 +17,7 @@ setuptools.setup(
         'clipboard': ['pyperclip>=1.8.2'],
     },
     entry_points={
-        'console_scripts': ['tltp = tltp.cli.__main__:main',],
+        'console_scripts': ['tltp = tltp.cli:main',],
     },
     classifiers=[
         'Programming Language :: Python :: 3',

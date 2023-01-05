@@ -1,3 +1,4 @@
+"""Time-derived passwords."""
 from tltp import _password_generator
 
 __all__ = ['disa_alphabet', 'time_password']
