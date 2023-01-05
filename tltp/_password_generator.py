@@ -8,6 +8,7 @@ from typing import Union
 
 
 class FixedRandom(random.Random):
+
     def __init__(self, source: bytes):
         super().__init__()
         self.source = source
@@ -18,10 +19,11 @@ class FixedRandom(random.Random):
 
     def random(self):
         source, self.source = self.source[:7], self.source[7:]
-        return (int.from_bytes(source, 'big') >> 3) * (2 ** -53)
+        return (int.from_bytes(source, 'big') >> 3) * (2**-53)
 
 
 class ValidAlphabet(Protocol):
+
     def __call__(self, prior: str) -> str:
         raise NotImplementedError
 
@@ -41,7 +43,7 @@ def nist_alphabet(prior: str) -> str:
     digit = '0123456789'
     symbol = '~!@#$%^&*()-=[]\\{}|'
     if len(prior) < 4:
-        return alpha+digit+symbol
+        return alpha + digit + symbol
 
     out = ''
     if not all([x in alpha for x in prior[-4:]]):
@@ -93,8 +95,8 @@ def derive_password(
     randomness = hashlib.scrypt(
         password=password,
         salt=salt,
-        dklen=7*length,
-        n=2 ** 14,
+        dklen=7 * length,
+        n=2**14,
         r=14,
         p=1,
     )

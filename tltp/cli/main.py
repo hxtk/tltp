@@ -75,10 +75,8 @@ def main(argv):
     seconds = seconds - datetime.datetime.utcnow().timestamp() % seconds
     remaining = datetime.timedelta(seconds=seconds)
     print(f'Your passwords will rotate in {remaining.days} days.')
-    print(
-        ('Use --offset=1 to get the next password or '
-         '--offset=-1 to get the previous one.')
-    )
+    print(('Use --offset=1 to get the next password or '
+           '--offset=-1 to get the previous one.'))
 
 
 if __name__ == '__main__':
