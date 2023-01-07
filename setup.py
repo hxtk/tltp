@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='tltp',
-    version='0.1.0-beta1',
+    version='0.1.0-alpha2',
     author='Peter Sanders',
     description='Time-based Long-Term Password',
     long_description=long_description,

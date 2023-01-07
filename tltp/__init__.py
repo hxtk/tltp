@@ -1,7 +1,16 @@
 """Time-derived passwords."""
 from tltp import _password_generator
 
-__all__ = ['disa_alphabet', 'time_password']
+__all__ = [
+    'derive_password',
+    'disa_password',
+    'random_password',
+    'time_password',
+    'PasswordFunction',
+]
 
+derive_password = _password_generator.derive_password
+disa_password = _password_generator.disa_password
+random_password = _password_generator.random_password
 time_password = _password_generator.time_password
-disa_alphabet = _password_generator.disa_alphabet
+PasswordFunction = _password_generator.PasswordFunction
