@@ -18,9 +18,13 @@ accessed ahead of time) using the `--offset` argument.
 ### Password complexity constraints
 
 Some organizations or services impose constraints on the passwords that may be
-used with their systems, and if your chosen name and generation function, there
-is no simple way to choose another. As a result, this program accepts arbitrary
-password generation functions that can be tailored to your organization's needs
+used with their systems. In stateful password managers with pseudorandom
+generation, this is a non-issue because one may simply choose another—doing
+rejection sampling by hand—but in a stateless system, there is no simple way to
+choose another. It must therefore be guaranteed that the password generation
+scheme shall never produce an unacceptable password. As a result, this program
+accepts arbitrary password generation functions that can be tailored to your
+organization's needs.
 
 ## User Guide
 
