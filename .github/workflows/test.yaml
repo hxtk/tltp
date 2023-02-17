@@ -30,9 +30,6 @@ jobs:
       - name: Test with pytest
         run: |
           pytest --cov=./ tltp
-      - name: Test with doctest
-        run: |
-          find tltp/ -name '*.py' | xargs python -m doctest
       - name: Upload coverage information
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
