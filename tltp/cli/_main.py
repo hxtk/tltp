@@ -1,10 +1,16 @@
 """Entrypoint for TLTP Command Line application."""
 import argparse
+import contextlib
 import datetime
 import getpass
 import os
 import random
+import shlex
 import sys
+from typing import Generator
+from typing import IO
+from typing import List
+from typing import Optional
 
 try:
     import pyperclip
@@ -14,7 +20,7 @@ except ImportError:
 import tltp
 
 
-def get_parser():
+def _get_parser():
     parser = argparse.ArgumentParser(
         prog='tltp',
         description=('Generate a time-derived password for the given name. '
@@ -103,20 +109,29 @@ def get_parser():
     return parser
 
 
-def get_arguments():
-    parser = get_parser()
-    flagfile = os.getenv('TLTP_FLAGFILE')
-    if flagfile is None:
-        return parser.parse_args()
+def get_arguments(argv: List[str], flag_file: Optional[IO] = None):
+    if flag_file is not None:
+        argv = shlex.split(flag_file.read()) + argv
+    return _get_parser().parse_args(argv)
 
-    with open(flagfile, 'r', encoding='utf-8') as f:
-        lines = [line.removesuffix('\n') for line in f]
 
-    return parser.parse_args(lines + sys.argv[1:])
+@contextlib.contextmanager
+def _try_open(path: Optional[str]) -> Generator[Optional[IO], None, None]:
+    if path is None:
+        yield None
+        return
+
+    f = open(path, 'r', encoding='utf-8')
+    try:
+        yield f
+    finally:
+        f.close()
 
 
 def main():
-    args = get_arguments()
+    flag_file = os.getenv('TLTP_FLAGFILE')
+    with _try_open(flag_file) as f:
+        args = get_arguments(sys.argv[1:], f)
 
     password = getpass.getpass('Master Password: ')
     if args.confirm:
